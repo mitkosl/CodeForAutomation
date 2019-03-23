@@ -7,6 +7,7 @@ from imutils.object_detection import non_max_suppression
 from picamera import PiCamera
 import numpy as np
 import pytesseract
+import speak as s
 import argparse
 import cv2
 import io
@@ -84,7 +85,7 @@ ap.add_argument("-p", "--padding", type=float, default=0.0,
 	help="amount of padding to add to each border of ROI")
 args = vars(ap.parse_args())
 
-
+camera = PiCamera()
 stream = io.BytesIO()
 camera.capture(stream, format='jpeg')
 #stream.seek(0)
@@ -180,6 +181,7 @@ for ((startX, startY, endX, endY), text) in results:
 	print("OCR TEXT")
 	print("========")
 	print("{}\n".format(text))
+	s.speak(text)
 
 	# strip out non-ASCII text so we can draw the text on the image
 	# using OpenCV, then draw the text and a bounding box surrounding

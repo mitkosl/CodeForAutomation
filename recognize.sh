@@ -1,0 +1,1 @@
+sudo python3 text_recognition.py --east frozen_east_text_detection.pb
