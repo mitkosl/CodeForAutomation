@@ -4,10 +4,12 @@
 
 # import the necessary packages
 from imutils.object_detection import non_max_suppression
+from picamera import PiCamera
 import numpy as np
 import pytesseract
 import argparse
 import cv2
+import io
 
 def decode_predictions(scores, geometry):
 	# grab the number of rows and columns from the scores volume, then
@@ -68,8 +70,8 @@ def decode_predictions(scores, geometry):
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", type=str,
-	help="path to input image")
+# ap.add_argument("-i", "--image", type=str,
+	# help="path to input image")
 ap.add_argument("-east", "--east", type=str,
 	help="path to input EAST text detector")
 ap.add_argument("-c", "--min-confidence", type=float, default=0.5,
@@ -82,8 +84,18 @@ ap.add_argument("-p", "--padding", type=float, default=0.0,
 	help="amount of padding to add to each border of ROI")
 args = vars(ap.parse_args())
 
+
+stream = io.BytesIO()
+camera.capture(stream, format='jpeg')
+#stream.seek(0)
+#image = Image.open(stream)
+# Construct a numpy array from the stream
+data = np.fromstring(stream.getvalue(), dtype=np.uint8)
+# "Decode" the image from the array, preserving colour
+image = cv2.imdecode(data, 1)
+
 # load the input image and grab the image dimensions
-image = cv2.imread(args["image"])
+#image = cv2.imread(args["image"])
 orig = image.copy()
 (origH, origW) = image.shape[:2]
 
